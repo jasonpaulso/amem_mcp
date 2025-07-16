@@ -1,0 +1,83 @@
+graph TB
+    subgraph "Host System"
+        subgraph "Docker Network: amemcontext_augment_default"
+            subgraph "A-MEM Server Container"
+                AS[A-MEM Server<br/>:8080, :9092]
+            end
+            
+            subgraph "ChromaDB Container"
+                CDB[ChromaDB<br/>:8000 → :8004]
+                CDBDATA[(Persistent Volume<br/>chromadb_data)]
+            end
+            
+            subgraph "Redis Container"
+                REDIS[Redis<br/>:6379 → :6380]
+                REDISDATA[(Persistent Volume<br/>redis_data)]
+            end
+            
+            subgraph "Sentence Transformers Container"
+                ST[Sentence Transformers<br/>:8000 → :8005]
+                STCACHE[(Model Cache<br/>sentence_transformers_cache)]
+            end
+            
+            subgraph "Prometheus Container"
+                PROM[Prometheus<br/>:9090 → :9091]
+                PROMDATA[(Persistent Volume<br/>prometheus_data)]
+            end
+            
+            subgraph "RabbitMQ Container"
+                RMQ[RabbitMQ<br/>:5672, :15672 → :5673, :15673]
+                RMQDATA[(Persistent Volume<br/>rabbitmq_data)]
+            end
+        end
+        
+        subgraph "External Access"
+            HOST[Host Ports<br/>8004, 8005, 6380, 9091, 15673]
+        end
+        
+        subgraph "Claude Desktop"
+            CD[Claude Desktop<br/>MCP Client]
+        end
+    end
+    
+    subgraph "External Services"
+        OAI[OpenAI API<br/>api.openai.com]
+    end
+    
+    %% Internal container connections
+    AS ---|Internal Network| CDB
+    AS ---|Internal Network| REDIS
+    AS ---|Internal Network| ST
+    AS ---|Internal Network| PROM
+    AS ---|Internal Network| RMQ
+    
+    %% Data persistence
+    CDB --- CDBDATA
+    REDIS --- REDISDATA
+    ST --- STCACHE
+    PROM --- PROMDATA
+    RMQ --- RMQDATA
+    
+    %% External access
+    HOST ---|Port Mapping| CDB
+    HOST ---|Port Mapping| REDIS
+    HOST ---|Port Mapping| ST
+    HOST ---|Port Mapping| PROM
+    HOST ---|Port Mapping| RMQ
+    
+    %% Claude Desktop connection
+    CD ---|MCP Protocol<br/>amem-server binary| AS
+    
+    %% External API
+    AS ---|HTTPS| OAI
+    
+    %% Styling
+    classDef container fill:#e3f2fd
+    classDef volume fill:#f3e5f5
+    classDef external fill:#fff3e0
+    classDef host fill:#e8f5e8
+    
+    class AS,CDB,REDIS,ST,PROM,RMQ container
+    class CDBDATA,REDISDATA,STCACHE,PROMDATA,RMQDATA volume
+    class OAI,CD external
+    class HOST host

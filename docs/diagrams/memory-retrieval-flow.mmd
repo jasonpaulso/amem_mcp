@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant C as Claude Desktop
+    participant A as A-MEM Server
+    participant E as Embedding Service
+    participant Ch as ChromaDB Service
+    participant DB as ChromaDB
+    participant ST as Sentence Transformers
+
+    C->>A: retrieve_relevant_memories(query, max_results, min_relevance)
+    A->>A: Set defaults (max_results=5, min_relevance=0.7)
+    A->>A: Validate request
+    
+    Note over A,E: Step 1: Generate Query Embedding
+    A->>E: Generate embedding for query
+    E->>ST: POST /embeddings (query text)
+    ST-->>E: Query embedding vector [384]
+    E-->>A: Query embedding array
+    
+    Note over A,Ch: Step 2: Vector Similarity Search
+    A->>Ch: SearchSimilar(query_embedding, limit*2, filters)
+    Ch->>Ch: Get collection UUID by name
+    Ch->>DB: POST /api/v1/collections/{uuid}/query
+    Note over DB: ChromaDB performs L2 distance<br/>similarity search
+    DB-->>Ch: Results with distances [1.64, 1.70, 1.72, ...]
+    Ch-->>A: Memories + distances
+    
+    Note over A: Step 3: Rank and Filter Results
+    loop For each memory result
+        A->>A: Calculate relevance = 1.0 / (1.0 + distance)
+        Note over A: Distance 1.64 → Relevance 0.378<br/>Distance 1.70 → Relevance 0.370<br/>Distance 1.72 → Relevance 0.368
+        A->>A: Filter by min_relevance threshold
+        A->>A: Generate match reason (keyword/content)
+    end
+    
+    A->>A: Sort by relevance score (highest first)
+    A->>A: Limit to max_results
+    
+    A-->>C: RetrieveMemoryResponse(memories[], total_found)
+    
+    Note over A,C: Success: Relevant memories returned with<br/>- Accurate similarity scores<br/>- Match reasoning<br/>- Proper ranking by relevance

@@ -1,0 +1,43 @@
+sequenceDiagram
+    participant C as Claude Desktop
+    participant A as A-MEM Server
+    participant L as LiteLLM Service
+    participant E as Embedding Service
+    participant Ch as ChromaDB Service
+    participant DB as ChromaDB
+    participant OAI as OpenAI API
+    participant ST as Sentence Transformers
+
+    C->>A: store_coding_memory(content, context, project_path)
+    A->>A: Generate memory ID
+    A->>A: Validate request
+    
+    Note over A,L: Step 1: AI Analysis
+    A->>L: Generate keywords, tags, context
+    L->>OAI: POST /v1/chat/completions (gpt-4.1)
+    OAI-->>L: AI analysis response
+    L-->>A: Structured memory data
+    
+    Note over A,E: Step 2: Generate Embeddings
+    A->>E: Generate embedding for content
+    E->>ST: POST /embeddings (384-dim)
+    ST-->>E: Embedding vector [384]
+    E-->>A: Embedding array
+    
+    Note over A,Ch: Step 3: Store in Vector DB
+    A->>Ch: StoreMemory(memory + embedding)
+    Ch->>Ch: Get collection UUID by name
+    Ch->>DB: POST /api/v1/collections/{uuid}/add
+    DB-->>Ch: HTTP 201 Created (success)
+    Ch-->>A: Storage confirmation
+    
+    Note over A: Step 4: Generate Links
+    A->>Ch: SearchSimilar for link generation
+    Ch->>DB: POST /api/v1/collections/{uuid}/query
+    DB-->>Ch: Similar memories with distances
+    Ch-->>A: Similar memories for linking
+    A->>A: Create memory links based on similarity
+    
+    A-->>C: StoreMemoryResponse(memory_id, keywords, tags, links_created)
+    
+    Note over A,C: Success: Memory stored with<br/>- AI-generated metadata<br/>- 384-dimensional embedding<br/>- Automatic linking to similar memories

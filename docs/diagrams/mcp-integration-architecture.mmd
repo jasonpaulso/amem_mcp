@@ -1,0 +1,85 @@
+graph TB
+    subgraph "Claude Desktop Application"
+        CD[Claude Desktop UI]
+        MCPC[MCP Client]
+        CONFIG[claude_desktop_config.json]
+    end
+    
+    subgraph "MCP Protocol Layer"
+        JSONRPC[JSON-RPC 2.0 Protocol]
+        STDIO[STDIO Transport]
+    end
+    
+    subgraph "A-MEM MCP Server Process"
+        MAIN[main.go]
+        MCPS[MCP Server Handler]
+        TOOLS[MCP Tools Registry]
+        
+        subgraph "Available Tools"
+            T1[store_coding_memory]
+            T2[retrieve_relevant_memories]
+            T3[evolve_memory_network]
+        end
+    end
+    
+    subgraph "Server Configuration"
+        PRODCONF[production.yaml]
+        ENVFILE[.env]
+        APIKEY[OPENAI_API_KEY]
+    end
+    
+    subgraph "Core Services"
+        MS[Memory System]
+        ES[Embedding Service]
+        CS[ChromaDB Service]
+        LS[LiteLLM Service]
+    end
+    
+    %% User interaction flow
+    CD --> MCPC
+    MCPC --> CONFIG
+    
+    %% MCP Protocol
+    MCPC <-->|JSON-RPC 2.0| JSONRPC
+    JSONRPC <-->|STDIO| STDIO
+    STDIO <-->|Process Communication| MAIN
+    
+    %% Server internal flow
+    MAIN --> MCPS
+    MCPS --> TOOLS
+    TOOLS --> T1
+    TOOLS --> T2
+    TOOLS --> T3
+    
+    %% Configuration loading
+    MAIN --> PRODCONF
+    MAIN --> ENVFILE
+    ENVFILE --> APIKEY
+    
+    %% Tool implementations
+    T1 --> MS
+    T2 --> MS
+    T3 --> MS
+    MS --> ES
+    MS --> CS
+    MS --> LS
+    
+    %% Configuration details
+    CONFIG -.->|Server Path| MAIN
+    CONFIG -.->|Config Path| PRODCONF
+    CONFIG -.->|Environment| APIKEY
+    
+    %% Styling
+    classDef client fill:#e1f5fe
+    classDef protocol fill:#f3e5f5
+    classDef server fill:#e8f5e8
+    classDef tools fill:#fff3e0
+    classDef config fill:#fce4ec
+    classDef services fill:#f1f8e9
+    
+    class CD,MCPC client
+    class JSONRPC,STDIO protocol
+    class MAIN,MCPS,TOOLS server
+    class T1,T2,T3 tools
+    class CONFIG,PRODCONF,ENVFILE,APIKEY config
+    class MS,ES,CS,LS services

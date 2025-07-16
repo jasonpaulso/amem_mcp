@@ -1,0 +1,72 @@
+graph TB
+    subgraph "Client Layer"
+        CD[Claude Desktop]
+        CC[Claude Code]
+    end
+    
+    subgraph "MCP Integration"
+        MCP[MCP Protocol<br/>JSON-RPC 2.0]
+        AMEM[A-MEM Server<br/>amem-augmented]
+    end
+    
+    subgraph "Core Services"
+        MS[Memory System]
+        ES[Embedding Service]
+        CS[ChromaDB Service]
+        LS[LiteLLM Service]
+    end
+    
+    subgraph "External APIs"
+        OAI[OpenAI API<br/>gpt-4.1]
+        ST[Sentence Transformers<br/>all-MiniLM-L6-v2]
+    end
+    
+    subgraph "Data Storage"
+        CDB[(ChromaDB<br/>Vector Database)]
+        REDIS[(Redis<br/>Cache)]
+    end
+    
+    subgraph "Monitoring"
+        PROM[Prometheus<br/>Metrics]
+        RMQ[RabbitMQ<br/>Events]
+    end
+    
+    %% Client connections
+    CD -->|MCP Protocol| MCP
+    CC -->|MCP Protocol| MCP
+    
+    %% MCP to A-MEM
+    MCP -->|JSON-RPC| AMEM
+    
+    %% A-MEM to Core Services
+    AMEM --> MS
+    AMEM --> ES
+    AMEM --> CS
+    AMEM --> LS
+    
+    %% Core Services to External APIs
+    LS -->|HTTPS| OAI
+    ES -->|HTTP| ST
+    
+    %% Core Services to Data Storage
+    CS -->|HTTP API| CDB
+    MS -->|TCP| REDIS
+    
+    %% Monitoring connections
+    AMEM -->|Metrics| PROM
+    AMEM -->|Events| RMQ
+    
+    %% Styling
+    classDef client fill:#e1f5fe
+    classDef mcp fill:#f3e5f5
+    classDef core fill:#e8f5e8
+    classDef external fill:#fff3e0
+    classDef storage fill:#fce4ec
+    classDef monitoring fill:#f1f8e9
+    
+    class CD,CC client
+    class MCP,AMEM mcp
+    class MS,ES,CS,LS core
+    class OAI,ST external
+    class CDB,REDIS storage
+    class PROM,RMQ monitoring
