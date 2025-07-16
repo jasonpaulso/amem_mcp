@@ -19,7 +19,7 @@ year={2025}
 Link to pdf of paper: https://arxiv.org/pdf/2502.12110v1
 Link to paper's github: https://github.com/WujiangXu/A-mem
 
-The authors of the paper also have their own implementation of the system (don't this it's an MCP Server):
+The authors of the paper also have their own implementation of the system (don't think it's an MCP Server):
 https://github.com/WujiangXu/A-mem-sys
 ___
 
