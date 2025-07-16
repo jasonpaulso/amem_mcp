@@ -83,8 +83,8 @@ An AI-powered memory system for Claude Code that enables persistent, contextual 
 ### 🚀 One-Command Installation
 
 ```bash
-git clone https://github.com/amem/mcp-server.git
-cd mcp-server
+git clone git@github.com:nixlim/amem_mcp.git
+cd amem_mcp
 ./scripts/install.sh
 ```
 

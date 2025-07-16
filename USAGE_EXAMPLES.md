@@ -1,4 +1,4 @@
-# A-MEM Usage Examples
+# A-MEM Usage Examples (written by AI)
 
 ## Real-World Integration Examples
 
