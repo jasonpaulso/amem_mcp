@@ -4,26 +4,14 @@ version: alpha
 This is an experiment in AI Assisted Software Engineering.
 A human wrote [NONE] of the code directly (not yet, anyway).
 USE AT OWN RISK :)
+
 ---
-ACKNOWLEDGEMENTS:
-This MCP Server was built on the basis of the following paper:
 
-```
-@article{xu2025mem,
-title={A-mem: Agentic memory for llm agents},
-author={Xu, Wujiang and Liang, Zujie and Mei, Kai and Gao, Hang and Tan, Juntao and Zhang, Yongfeng},
-journal={arXiv preprint arXiv:2502.12110},
-year={2025}
-}
-```
-Link to pdf of paper: https://arxiv.org/pdf/2502.12110v1
-Link to paper's github: https://github.com/WujiangXu/A-mem
+## What problem does this solve:
 
-The authors of the paper also have their own implementation of the system (don't think it's an MCP Server):
-https://github.com/WujiangXu/A-mem-sys
-___
+This Zettlekasten-based Model Context Protocol memory server addresses the challenge of maintaining a persistent, evolving understanding of complex codebases across multiple sessions and projects when working with tools like Claude Code and Claude Desktop. Traditional approaches often result in fragmented, non-persistent memories that reset with each session, making it difficult to build and search a comprehensive knowledge base. This server solves that by creating a "living" memory system that self-updates as new notes and information are added, automatically discovering relationships and connections to foster deeper insights and seamless continuity.
 
-# HOW TO RUN
+## HOW TO RUN
 
 See QUICK_START.md for a quick start guide.
 
@@ -318,6 +306,25 @@ I went to Arxiv, found the A-MEM paper and built an A-MEM MCP Server with AI.
 In 10 hours I delivered a project that would take me, working solo without the AI, about 2-3 weeks of 5 days a week, 8 hours a day. 
 
 It is by no means perfect. It is good enough though. I will continue to improve it. 
+
+---
+ACKNOWLEDGEMENTS:
+This MCP Server was built on the basis of the following paper:
+
+```
+@article{xu2025mem,
+title={A-mem: Agentic memory for llm agents},
+author={Xu, Wujiang and Liang, Zujie and Mei, Kai and Gao, Hang and Tan, Juntao and Zhang, Yongfeng},
+journal={arXiv preprint arXiv:2502.12110},
+year={2025}
+}
+```
+Link to pdf of paper: https://arxiv.org/pdf/2502.12110v1
+Link to paper's github: https://github.com/WujiangXu/A-mem
+
+The authors of the paper also have their own implementation of the system (don't think it's an MCP Server):
+https://github.com/WujiangXu/A-mem-sys
+___
 
 It works. It has tests, startup scripts, local docker. Claude Desktop integration works, as should Claude Code.
 
