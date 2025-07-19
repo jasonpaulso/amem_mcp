@@ -1,5 +1,10 @@
-# A-MEM MCP Server
+# A-MEM MCP Server 
 version: alpha
+
+
+Name of the project has been changed to `zetmem` and it can be found here:
+https://github.com/nixlim/zetmem
+
 --- 
 This is an experiment in AI Assisted Software Engineering.
 A human wrote [NONE] of the code directly (not yet, anyway).
